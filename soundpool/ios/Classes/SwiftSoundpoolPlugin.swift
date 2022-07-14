@@ -80,6 +80,7 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                 
             }
             let mode: AVAudioSession.Mode
+            var options: AVAudioSession.CategoryOptions = []
             switch modeAttr {
             case "moviePlayback":
                 mode = .moviePlayback
@@ -97,9 +98,10 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                 mode = .measurement
             default:
                 mode = .default
+                options = [.duckOthers]
             }
             do {
-                try AVAudioSession.sharedInstance().setCategory(category, mode: mode)
+                try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: options)
                 print("Audio session updated: category = '\(category)', mode = '\(mode)'.")
             } catch (let e) {
                 //do nothing
