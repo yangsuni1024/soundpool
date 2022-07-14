@@ -64,6 +64,7 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                 return
             }
             let modeAttr = attributes["ios_avSessionMode"] as! String
+            let optionAttr = attributes["ios_avSessionOption"] as! String
             
             let category: AVAudioSession.Category
             switch categoryAttr {
@@ -80,7 +81,6 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                 
             }
             let mode: AVAudioSession.Mode
-            var options: AVAudioSession.CategoryOptions = []
             switch modeAttr {
             case "moviePlayback":
                 mode = .moviePlayback
@@ -98,11 +98,24 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                 mode = .measurement
             default:
                 mode = .default
-                options = [.duckOthers]
+            }
+
+            let option: AVAudioSession.CategoryOptions
+            switch optionAttr {
+            case "mixWithOthers":
+                option = .mixWithOthers
+            case "duckOthers":
+                option = .duckOthers
+            case "allowBluetooth":
+                option = .allowBluetooth
+            case "interruptSpokenAudioAndMixWithOthers":
+                option = .interruptSpokenAudioAndMixWithOthers
+            default:
+                option = .defaultToSpeaker
             }
             do {
-                try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: options)
-                print("Audio session updated: category = '\(category)', mode = '\(mode)'.")
+                try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: [option])
+                print("Audio session updated: category = '\(category)', mode = '\(mode)', options = '\(option)'.")
             } catch (let e) {
                 //do nothing
                 print("Error while trying to set audio category: '\(e)'")
@@ -221,7 +234,12 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                         audioPlayer.enableRate = true
                         audioPlayer.rate = Float(rate)
                     }
-                    
+
+                    do {
+                        try AVAudioSession.sharedInstance().setActive(true)
+                    } catch (let e) {
+                        //do nothing
+                    }
                     if (audioPlayer.play()) {
                         streamsCount[soundId] = currentCount + 1
                         nowPlaying[streamId] = nowPlayingData
@@ -229,6 +247,7 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                     } else {
                         result(0) // failed to play sound
                     }
+
                     // lets recreate the audioPlayer for next request - setting numberOfLoops has initially no effect
                     
                     if let previousData = audioPlayer.data {
@@ -273,6 +292,13 @@ public class SwiftSoundpoolPlugin: NSObject, FlutterPlugin {
                 } else {
                     result(-1)
                 }
+
+                do {
+                    try AVAudioSession.sharedInstance().setActive(false)
+                } catch (let e) {
+                    //do nothing
+                }
+
             case "setVolume":
                 let streamId = attributes["streamId"] as? Int
                 let soundId = attributes["soundId"] as? Int

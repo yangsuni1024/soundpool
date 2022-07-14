@@ -77,4 +77,9 @@ class MethodChannelSoundpoolPlatform extends SoundpoolPlatform {
   @override
   Future<void> release(int poolId) =>
       _channel.invokeMethod("release", {"poolId": poolId});
+
+  // @override
+  // Future<void> setActive(bool isActive) =>
+  //     _channel.invokeMethod("setActive", {"isActive": isActive});
+
 }

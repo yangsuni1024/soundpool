@@ -293,6 +293,10 @@ class Soundpool {
     await _soundpoolId.future.then(
         (poolId) => _platformInstance.setRate(poolId, streamId, playbackRate));
   }
+  //
+  // Future<void> setActive(bool isActive) async {
+  //   await _platformInstance.setActive(isActive);
+  // }
 
   /// Releases loaded sounds
   ///

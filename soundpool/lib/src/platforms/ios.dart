@@ -9,6 +9,8 @@ class SoundpoolOptionsIos {
   /// Audio Session category for shared [AVAudioSession](https://developer.apple.com/documentation/avfaudio/avaudiosession)
   final AudioSessionCategory? audioSessionCategory;
 
+  final AudioSessionOption audioSessionOption;
+
   /// Audio Session mode for shared [AVAudioSession](https://developer.apple.com/documentation/avfaudio/avaudiosession)
   final AudioSessionMode audioSessionMode;
 
@@ -16,12 +18,14 @@ class SoundpoolOptionsIos {
     this.enableRate = true,
     this.audioSessionCategory,
     this.audioSessionMode = AudioSessionMode.normal,
+    this.audioSessionOption = AudioSessionOption.mixWithOthers
   });
 
   Map<String, dynamic> toOptionsMap() => {
         'enableRate': enableRate,
         'avSessionCategory': audioSessionCategory?.toString().split('.').last,
         'avSessionMode': audioSessionMode.toString().split('.').last,
+        'avSessionOption': audioSessionOption.toString().split('.').last,
       };
 }
 
@@ -49,4 +53,14 @@ enum AudioSessionMode {
   videoChat,
   spokenAudio,
   measurement,
+}
+
+enum AudioSessionOption {
+  mixWithOthers,
+  duckOthers,
+  allowBluetooth,
+  defaultToSpeaker,
+  interruptSpokenAudioAndMixWithOthers,
+  allowBluetoothA2DP,
+  allowAirPlay
 }

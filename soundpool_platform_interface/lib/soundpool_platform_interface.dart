@@ -69,4 +69,9 @@ abstract class SoundpoolPlatform extends PlatformInterface {
   Future<void> setRate(int poolId, int streamId, double playbackRate) {
     throw UnimplementedError('setRate() has not been implemented');
   }
+
+  //
+  // Future<void> setActive(bool isActive) {
+  //   throw UnimplementedError('setActive() has not been implemented');
+  // }
 }
